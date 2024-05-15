@@ -90,3 +90,33 @@ p {
     display: block;
     margin: 0 auto;
 }
+
+.team-gallery {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.team-member {
+
+    text-align: center;
+    width: calc(33% - 40px);
+}
+
+.team-member img {
+
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.team-member p {
+
+    margin: 10px 0;
+    color: white;
+}
