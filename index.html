@@ -1,88 +1,207 @@
 <!DOCTYPE html>
+<html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-    <meta name = "description" content = "Visualisation Group Project">
-    <meta name = "author" content = "Sujaya, Sanjula, Sadev">
-    <meta name = "keywords" content = "HTML, CSS, Javascript, D3">
-
-    <title>Test Page</title>
-    <link rel = "stylesheet" href = "css/main.css">
-    <script src = "https://d3js.org/d3.v7.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmaceutical Drug Usage</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
-
     <header>
-
-        <nav>
-
-            <!--  Division for title and top section of the page -->
-
-            <ul>
-
-                <li> <a href = "index.html"> Home </a> </li>
-                <li> <a href = "sketch.html"> Sketches </a> </li>
-                <li> <a href = "aboutus.html">About Us </a> </li>
-
-            </ul>
-
-        </nav>
-
-    </header>
-
-    <main>
-
         <h1>Pharmaceutical Drug Usage</h1>
-
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="geomap.html">GeoMap</a></li>
+                <li><a href="sketch.html">Sketch</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="button-container">
+            <button id="australiaButton">Australia</button>
+            <button id="germanyButton">Germany</button>
+            <button id="denmarkButton">Denmark</button>
+        </div>
+        <div id="chart"></div>
     </main>
+    <footer>
+        <p>Data Visualization</p>
+        <p>COS30045</p>
+        <p>CL13 T11</p>
+    </footer>
 
     <script>
+        var a = 800;
+        var b = 400;
+        const padding = 70;
 
-        var width = 500; 
-        var height = 100; 
-        var padding = 1;
+        var australiaDataset;
+        var germanyDataset;
+        var denmarkDataset;
 
-        var dataset = [14, 5, 26, 23, 9];
+        function loadDataset() {
 
-        var svg = d3.select("body")
-                    .append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
+            return Promise.all([
 
-            svg.selectAll("rect")
-               .data(dataset)
-               .enter()
-               .append("rect")
-               .attr("x", function(d, i) {
+                d3.csv("AussieData.csv").then(function(data) {
 
-                return i * (width / dataset.length);
-               })
-               .attr("y", 0)
-               .attr("width", 20)
-               .attr("height", function(d) {
+                    australiaDataset = data.map(function(d) {
 
-                return d * 4;
-               });
-        
+                        return +d.Sales;
+                    });
+                }),
+                d3.csv("GermData.csv").then(function(data) {
+
+                    germanyDataset = data.map(function(d) {
+
+                        return +d.Sales;
+                    });
+                }),
+                d3.csv("DenData.csv").then(function(data) {
+
+                    denmarkDataset = data.map(function(d) {
+
+                        return +d.Sales;
+                    });
+                })
+            ]);
+        }
+
+        loadDataset().then(function(data) {
+
+            var dataset = australiaDataset;
+
+            var xScale = d3.scaleBand()
+                .domain(d3.range(dataset.length))
+                .rangeRound([padding, a - padding])
+                .paddingInner(0.05);
+
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset)])
+                .range([b - padding, padding]);
+
+            var svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", a)
+                .attr("height", b);
+
+            var bars = svg.selectAll("rect")
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr("x", function(d, i) {
+
+                    return xScale(i);
+                })
+                .attr("y", function(d) {
+
+                    return yScale(d);
+                })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) {
+
+                    return b - padding - yScale(d);
+                })
+                .attr("fill", "darkgoldenrod")
+                .on("mouseover", function(event, d) {
+
+                    var xPos = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+                    var yPos = parseFloat(d3.select(this).attr("y")) - 10;
+
+                    svg.append("text")
+                       .attr("id", "tooltip")
+                       .attr("x", xPos)
+                       .attr("y", yPos)
+                       .attr("text-anchor", "middle")
+                       .attr("font-family", "sans-serif")
+                       .attr("font-size", "12px")
+                       .attr("font-weight", "bold")
+                       .attr("fill", "black")
+                       .text(d);   
+                })
+                .on("mouseout", function() {
+
+                    d3.select("#tooltip").remove();
+                });
+
+            function updateChart(newDataset, color, textColor) {
+                yScale.domain([0, d3.max(newDataset)]);
+
+                bars.data(newDataset)
+                    .transition()
+                    .delay(function(d, i) {
+
+                        return i * 100;
+                    })
+                    .duration(2000)
+                    .attr("y", function(d) {
+
+                        return yScale(d);
+                    })
+                    .attr("height", function(d) {
+
+                        return b - padding - yScale(d);
+                    })
+                    .attr("fill", color);
+            }
+
+            d3.select("#australiaButton")
+            .on("click", function() {
+
+                updateChart(australiaDataset, "darkgoldenrod", "black");
+            });
+
+            d3.select("#germanyButton")
+                .on("click", function() {
+
+                    updateChart(germanyDataset, "black", "white");
+                });
+
+            d3.select("#denmarkButton")
+                .on("click", function() {
+
+                    updateChart(denmarkDataset, "red", "black");
+                });
+
+            // Adding x-axis
+            var xAxis = d3.axisBottom()
+                .scale(xScale)
+                .ticks(dataset.length);
+
+            svg.append("g")
+                .attr("transform", "translate(0," + (b - padding) + ")")
+                .call(xAxis);
+
+            // Adding x-axis label
+            svg.append("text")
+                .attr("transform", "translate(" + (a / 2) + " ," + (b - 10) + ")")
+                .style("text-anchor", "middle")
+                .text("Year");
+
+            // Adding y-axis
+            var yAxis = d3.axisLeft()
+                .scale(yScale)
+                .ticks(10);
+
+            svg.append("g")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxis);
+
+            // Adding y-axis label
+            svg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - padding + 75)
+                .attr("x", 0 - (b / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("Sales (in Millions)");
+        })
     </script>
-
-    <footer>
-
-        Data Visualisation
-        
-        <br>
-
-        COS30045
-
-        <br>
-        
-        CL13 T11
-
-    </footer>
-    
 </body>
 
 </html>
