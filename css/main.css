@@ -153,6 +153,7 @@ main section p {
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
+    margin-bottom: 20px;
 }
 
 button {
@@ -182,4 +183,18 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+/* FlexBox Code */
+.container {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.chart-container {
+
+    flex: 1;
 }

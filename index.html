@@ -2,47 +2,86 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Pharmaceutical Drug Usage</title>
+
     <link rel="stylesheet" href="css/main.css">
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
 </head>
 
 <body>
+
     <header>
+
         <h1>Pharmaceutical Drug Usage</h1>
+
         <nav>
+
             <ul>
+
                 <li><a href="index.html">Home</a></li>
                 <li><a href="geomap.html">GeoMap</a></li>
                 <li><a href="sketch.html">Sketch</a></li>
                 <li><a href="aboutus.html">About Us</a></li>
+
             </ul>
+
         </nav>
+
     </header>
-    <main>
-        <div class="button-container">
-            <button id="australiaButton">Australia</button>
-            <button id="germanyButton">Germany</button>
-            <button id="denmarkButton">Denmark</button>
+
+    <main class="container">
+
+        <div class="chart-container">
+
+            <div class="button-container">
+
+                <button id="australiaButton">Australia</button>
+                <button id="germanyButton">Germany</button>
+                <button id="denmarkButton">Denmark</button>
+
+            </div>
+
+            <div id="chart"></div>
+
         </div>
-        <div id="chart"></div>
+
+        <div class="chart-container">
+
+            <div id="secondChart"></div>
+            
+        </div>
+
     </main>
+
     <footer>
+
         <p>Data Visualization</p>
         <p>COS30045</p>
         <p>CL13 T11</p>
+
     </footer>
 
     <script>
-        var a = 800;
+
+        var a = 700;
         var b = 400;
         const padding = 70;
 
         var australiaDataset;
         var germanyDataset;
         var denmarkDataset;
+
+        var ausSpendDataset;
+        var usSpendDataset;
+        var israelSpendDataset;
+        var swedenSpendDataset;
+        var caSpendDataset;
 
         function loadDataset() {
 
@@ -52,21 +91,56 @@
 
                     australiaDataset = data.map(function(d) {
 
-                        return +d.Sales;
+                        return { Year: d.Year, Sales: +d.Sales };
                     });
                 }),
                 d3.csv("GermData.csv").then(function(data) {
 
                     germanyDataset = data.map(function(d) {
 
-                        return +d.Sales;
+                        return { Year: d.Year, Sales: +d.Sales };
                     });
                 }),
                 d3.csv("DenData.csv").then(function(data) {
 
                     denmarkDataset = data.map(function(d) {
 
-                        return +d.Sales;
+                        return { Year: d.Year, Sales: +d.Sales };
+                    });
+                }),
+                d3.csv("USSpend.csv").then(function(data) {
+
+                    usSpendDataset = data.map(function(d) {
+
+                        return { Year: d.Year, Spending: +d.Spending }
+                    });
+                }),
+                d3.csv("AUSSPend.csv").then(function(data) {
+
+                    ausSpendDataset = data.map(function(d) {
+
+                        return { Year: d.Year, Spending: +d.Spending }
+                    });
+                }),
+                d3.csv("CASpend.csv").then(function(data) {
+
+                    caSpendDataset = data.map(function(d) {
+
+                        return { Year: d.Year, Spending: +d.Spending };
+                    });
+                }),
+                d3.csv("SwedenSpend.csv").then(function(data) {
+
+                    swedenSpendDataset = data.map(function(d) {
+
+                        return { Year: d.Year, Spending: +d.Spending };
+                    });
+                }),
+                d3.csv("IsraelSpend.csv").then(function(data) {
+
+                    israelSpendDataset = data.map(function(d) {
+
+                        return { Year: d.Year, Spending: +d.Spending };
                     });
                 })
             ]);
@@ -77,12 +151,18 @@
             var dataset = australiaDataset;
 
             var xScale = d3.scaleBand()
-                .domain(d3.range(dataset.length))
+                .domain(dataset.map(function(d) {
+
+                    return d.Year;
+                }))
                 .rangeRound([padding, a - padding])
                 .paddingInner(0.05);
 
             var yScale = d3.scaleLinear()
-                .domain([0, d3.max(dataset)])
+                .domain([0, d3.max(dataset, function(d) {
+
+                    return d.Sales;
+                })])
                 .range([b - padding, padding]);
 
             var svg = d3.select("#chart")
@@ -96,16 +176,16 @@
                 .append("rect")
                 .attr("x", function(d, i) {
 
-                    return xScale(i);
+                    return xScale(d.Year);
                 })
                 .attr("y", function(d) {
 
-                    return yScale(d);
+                    return yScale(d.Sales);
                 })
                 .attr("width", xScale.bandwidth())
                 .attr("height", function(d) {
 
-                    return b - padding - yScale(d);
+                    return b - padding - yScale(d.Sales);
                 })
                 .attr("fill", "darkgoldenrod")
                 .on("mouseover", function(event, d) {
@@ -122,7 +202,7 @@
                        .attr("font-size", "12px")
                        .attr("font-weight", "bold")
                        .attr("fill", "black")
-                       .text(d);   
+                       .text(d.Sales);   
                 })
                 .on("mouseout", function() {
 
@@ -130,7 +210,15 @@
                 });
 
             function updateChart(newDataset, color, textColor) {
-                yScale.domain([0, d3.max(newDataset)]);
+
+                xScale.domain(newDataset.map(function(d) {
+
+                    return d.Year;
+                }))
+                yScale.domain([0, d3.max(newDataset, function(d) {
+
+                    return d.Sales;
+                })]);
 
                 bars.data(newDataset)
                     .transition()
@@ -139,13 +227,17 @@
                         return i * 100;
                     })
                     .duration(2000)
+                    .attr("x", function(d) {
+
+                        return xScale(d.Year)
+                    })
                     .attr("y", function(d) {
 
-                        return yScale(d);
+                        return yScale(d.Sales);
                     })
                     .attr("height", function(d) {
 
-                        return b - padding - yScale(d);
+                        return b - padding - yScale(d.Sales);
                     })
                     .attr("fill", color);
             }
@@ -200,7 +292,158 @@
                 .attr("dy", "1em")
                 .style("text-anchor", "middle")
                 .text("Sales (in Millions)");
-        })
+
+            // Line chart setup for secondChart
+            var lineSvg = d3.select("#secondChart")
+                .append("svg")
+                .attr("width", a)
+                .attr("height", b);
+
+            var lineXScale = d3.scaleBand()
+                .domain(ausSpendDataset.map(function(d) {
+                    
+                    return d.Year; 
+                }))
+                .range([padding, a - padding])
+                .padding(0.1);
+
+            var lineYScale = d3.scaleLinear()
+                .domain([0, d3.max([].concat(ausSpendDataset, usSpendDataset, caSpendDataset, swedenSpendDataset, israelSpendDataset), function(d) { 
+
+                    return d.Spending; 
+                })])
+                .range([b - padding, padding]);
+
+            var line = d3.line()
+                .x(function(d) { 
+                    
+                    return lineXScale(d.Year); 
+                })
+                .y(function(d) { 
+                    
+                    return lineYScale(d.Spending); 
+                });
+
+            function addLine(dataset, color) {
+
+                lineSvg.append("path")
+                .datum(dataset)
+                .attr("fill", "none")
+                .attr("stroke", color)
+                .attr("stroke-width", 1.5)
+                .attr("d", line);
+
+            // Add Circles 
+            lineSvg.selectAll("circle")
+                   .data(dataset)
+                   .enter()
+                   .append("circle")
+                   .attr("cx", function(d) {
+
+                        return lineXScale(d.Year);
+                   })
+                   .attr("cy", function(d) {
+                    
+                        return lineYScale(d.Spending);
+                   })
+                   .attr("r", 4)
+                   .attr("fill", color)
+                   .on("mouseover", function(event, d) {
+
+                    var xPos = lineXScale(d.Year);
+                    var yPos = lineYScale(d.Spending) - 10;
+
+                    lineSvg.append("text")
+                           .attr("id", "tooltip")
+                           .attr("x", xPos)
+                           .attr("y", yPos)
+                           .attr("text-anchor", "middle")
+                           .attr("font-family", "sans-serif")
+                           .attr("font-size", "12px")
+                           .attr("font-weight", "bold")
+                           .attr("fill", color)
+                           .text(d.Spending);
+                   })
+                   .on("mouseout", function() {
+
+                        d3.select("#tooltip").remove();
+                   });
+            }
+
+            addLine(usSpendDataset, "blue");
+            addLine(ausSpendDataset, "orange");
+            addLine(caSpendDataset, "red");
+            addLine(swedenSpendDataset, "lightblue");
+            addLine(israelSpendDataset, "green");
+
+            var lineXAxis = d3.axisBottom(lineXScale);
+            var lineYAxis = d3.axisLeft(lineYScale).ticks(15);
+
+            lineSvg.append("g")
+                .attr("transform", "translate(0," + (b - padding) + ")")
+                .call(lineXAxis);
+
+            lineSvg.append("text")
+                .attr("transform", "translate(" + (a / 2) + " ," + (b - 10) + ")")
+                .style("text-anchor", "middle")
+                .text("Year");
+
+            lineSvg.append("g")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(lineYAxis);
+
+            lineSvg.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - padding + 75)
+                .attr("x", 0 - (b / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text("US$ / Capita");
+
+            //Adding a legend 
+            var legend = lineSvg.append("g")
+                                .attr("transform", "translate (" + (padding) + ", " + (b - 400) + ")");
+
+            var legendData = [
+
+                { label: "US", color: "blue" },
+                { label: "Australia", color: "orange" },
+                { label: "Canada", color: "red" },
+                { label: "Sweden", color: "lightblue" },
+                { label: "Israel", color: "green" }
+            ];
+
+            legend.selectAll("rect")
+                .data(legendData)
+                .enter()
+                .append("rect")
+                .attr("x", function(d, i) {
+
+                    return i * 100;
+                })
+                .attr("y", 0)
+                .attr("width", 18)
+                .attr("height", 18)
+                .attr("fill", function (d) { 
+                    
+                    return d.color; 
+                });
+
+                legend.selectAll("text")
+                .data(legendData)
+                .enter()
+                .append("text")
+                .attr("x", function(d, i) {
+
+                    return i ;
+                })
+                .attr("y", 9)
+                })
+                .attr("dy", ".35em")
+                .text(function (d) { 
+                    
+                    return d.label; 
+                });
     </script>
 </body>
 
