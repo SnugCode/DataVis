@@ -101,7 +101,7 @@
     <script>
 
         var a = 700;
-        var b = 450;  // Increase height to provide space for the legend
+        var b = 450; 
         const padding = 70;
 
         var australiaDataset;
@@ -186,8 +186,8 @@
 
                     return d.Year;
                 }))
-                .range([padding, a - padding])  // Adjusted range to prevent points outside the visible area
-                .padding(0.1);  // Adjust padding to control point placement
+                .range([padding, a - padding])  
+                .padding(0.1);
 
             var yScale = d3.scaleLinear()
                 .domain([0, d3.max(dataset, function(d) {
