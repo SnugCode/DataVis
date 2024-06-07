@@ -61,6 +61,15 @@ function init() {
         var countryInfo = document.getElementById("location_info");
         countryInfo.innerHTML = "<h4>" + country.properties.name + "</h4>";
     }
+
+    // Zoom buttons functionality
+    d3.select("#zoom_in").on("click", function () {
+        zoom.scaleBy(svg.transition().duration(750), 1.2);
+    });
+
+    d3.select("#zoom_out").on("click", function () {
+        zoom.scaleBy(svg.transition().duration(750), 0.8);
+    });
 }
 
 window.onload = init;

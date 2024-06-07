@@ -213,3 +213,23 @@ footer {
     margin: 20px;
     text-align: center;
 }
+
+.zoom-buttons {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+.zoom-buttons button {
+    display: block;
+    margin: 5px 0;
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.zoom-buttons button:hover {
+    background-color: #555;
+}
