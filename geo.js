@@ -2,12 +2,17 @@ function init() {
     var width = 960;
     var height = 500;
 
-    // Color scale for highlighted countries
-    var highlightColor = "#69b3a2";
+    // Color mapping for highlighted countries
+    var countryColors = {
+        "Australia": "#ff9999",
+        "Canada": "#66b3ff",
+        "Denmark": "#99ff99",
+        "Germany": "#ffcc99",
+        "Israel": "#c2c2f0",
+        "Sweden": "#ffb3e6",
+        "USA": "#c2f0c2"
+    };
     var defaultColor = "#d3d3d3";
-
-    // Countries to highlight
-    var highlightCountries = ["Australia", "Canada", "Denmark", "Germany", "Israel", "Sweden", "United States of America"];
 
     // Projection
     var projection = d3.geoMercator()
@@ -52,13 +57,17 @@ function init() {
             .attr("class", "country")
             .attr("d", path)
             .style("fill", function (d) {
-                return highlightCountries.includes(d.properties.name) ? highlightColor : defaultColor;
+                var countryName = d.properties.name === "United States of America" ? "USA" : d.properties.name;
+                return countryColors[countryName] || defaultColor;
             })
+            .style("stroke", "#000")
+            .style("stroke-width", "1px")
             .on("mouseover", function (event, d) {
+                var countryName = d.properties.name === "United States of America" ? "USA" : d.properties.name;
                 tooltip.transition()
                     .duration(200)
                     .style("opacity", .9);
-                tooltip.html(d.properties.name)
+                tooltip.html(countryName)
                     .style("left", (event.pageX + 5) + "px")
                     .style("top", (event.pageY - 28) + "px");
             })
@@ -77,9 +86,28 @@ function init() {
         .style("opacity", 0);
 
     function showCountryData(country) {
+        var countryName = country.properties.name === "United States of America" ? "USA" : country.properties.name;
         var countryInfo = document.getElementById("location_info");
-        countryInfo.innerHTML = "<h4>" + country.properties.name + "</h4>";
+        countryInfo.innerHTML = "<h4>" + countryName + "</h4>";
     }
+
+    // Info button
+    var infoButton = d3.select("#map").append("div")
+        .attr("class", "info-button")
+        .html("i");
+
+    // Info tooltip
+    var infoTooltip = d3.select("#map").append("div")
+        .attr("class", "info-tooltip")
+        .html("This map highlights specific countries that have been used within the previous visualizations.");
+
+    infoButton.on("mouseover", function () {
+        infoTooltip.style("display", "block");
+    });
+
+    infoButton.on("mouseout", function () {
+        infoTooltip.style("display", "none");
+    });
 }
 
 window.onload = init;
