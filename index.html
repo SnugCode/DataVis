@@ -70,7 +70,7 @@
     <script>
 
         var a = 700;
-        var b = 400;
+        var b = 450;  // Increase height to provide space for the legend
         const padding = 70;
 
         var australiaDataset;
@@ -155,8 +155,8 @@
 
                     return d.Year;
                 }))
-                .rangeRound([padding, a - padding])
-                .paddingInner(0.05);
+                .range([padding, a - padding])  // Adjusted range to prevent points outside the visible area
+                .padding(0.1);  // Adjust padding to control point placement
 
             var yScale = d3.scaleLinear()
                 .domain([0, d3.max(dataset, function(d) {
@@ -297,14 +297,14 @@
             var lineSvg = d3.select("#secondChart")
                 .append("svg")
                 .attr("width", a)
-                .attr("height", b);
+                .attr("height", b + 70); // Increase height to provide space for the legend
 
             var lineXScale = d3.scaleBand()
                 .domain(ausSpendDataset.map(function(d) {
                     
                     return d.Year; 
                 }))
-                .range([padding, a - padding])
+                .range([padding, a - padding])  // Adjusted range to prevent points outside the visible area
                 .padding(0.1);
 
             var lineYScale = d3.scaleLinear()
@@ -315,59 +315,54 @@
                 .range([b - padding, padding]);
 
             var line = d3.line()
-                .x(function(d) { 
-                    
+            .x(function(d) { 
                     return lineXScale(d.Year); 
                 })
                 .y(function(d) { 
-                    
                     return lineYScale(d.Spending); 
                 });
 
             function addLine(dataset, color) {
 
                 lineSvg.append("path")
-                .datum(dataset)
-                .attr("fill", "none")
-                .attr("stroke", color)
-                .attr("stroke-width", 1.5)
-                .attr("d", line);
+                    .datum(dataset)
+                    .attr("fill", "none")  // Ensure no fill below the line
+                    .attr("stroke", color)
+                    .attr("stroke-width", 1.5)
+                    .attr("d", line);
 
-            // Add Circles 
-            lineSvg.selectAll("circle")
-                   .data(dataset)
-                   .enter()
-                   .append("circle")
-                   .attr("cx", function(d) {
-
+                // Add Circles 
+                lineSvg.selectAll("circle." + color.replace("#", ""))
+                    .data(dataset)
+                    .enter()
+                    .append("circle")
+                    .attr("class", color.replace("#", ""))
+                    .attr("cx", function(d) {
                         return lineXScale(d.Year);
-                   })
-                   .attr("cy", function(d) {
-                    
+                    })
+                    .attr("cy", function(d) {
                         return lineYScale(d.Spending);
-                   })
-                   .attr("r", 4)
-                   .attr("fill", color)
-                   .on("mouseover", function(event, d) {
+                    })
+                    .attr("r", 4)
+                    .attr("fill", color)
+                    .on("mouseover", function(event, d) {
+                        var xPos = lineXScale(d.Year);
+                        var yPos = lineYScale(d.Spending) - 10;
 
-                    var xPos = lineXScale(d.Year);
-                    var yPos = lineYScale(d.Spending) - 10;
-
-                    lineSvg.append("text")
-                           .attr("id", "tooltip")
-                           .attr("x", xPos)
-                           .attr("y", yPos)
-                           .attr("text-anchor", "middle")
-                           .attr("font-family", "sans-serif")
-                           .attr("font-size", "12px")
-                           .attr("font-weight", "bold")
-                           .attr("fill", color)
-                           .text(d.Spending);
-                   })
-                   .on("mouseout", function() {
-
+                        lineSvg.append("text")
+                            .attr("id", "tooltip")
+                            .attr("x", xPos)
+                            .attr("y", yPos)
+                            .attr("text-anchor", "middle")
+                            .attr("font-family", "sans-serif")
+                            .attr("font-size", "12px")
+                            .attr("font-weight", "bold")
+                            .attr("fill", color)
+                            .text(d.Spending);
+                    })
+                    .on("mouseout", function() {
                         d3.select("#tooltip").remove();
-                   });
+                    });
             }
 
             addLine(usSpendDataset, "blue");
@@ -400,12 +395,11 @@
                 .style("text-anchor", "middle")
                 .text("US$ / Capita");
 
-            //Adding a legend 
+            // Adding a legend 
             var legend = lineSvg.append("g")
-                                .attr("transform", "translate (" + (padding) + ", " + (b - 400) + ")");
+                .attr("transform", "translate(" + padding + ", " + (b + 30) + ")"); // Adjust transform to move legend below the x-axis label
 
             var legendData = [
-
                 { label: "US", color: "blue" },
                 { label: "Australia", color: "orange" },
                 { label: "Canada", color: "red" },
@@ -418,32 +412,28 @@
                 .enter()
                 .append("rect")
                 .attr("x", function(d, i) {
-
                     return i * 100;
                 })
                 .attr("y", 0)
                 .attr("width", 18)
                 .attr("height", 18)
-                .attr("fill", function (d) { 
-                    
-                    return d.color; 
+                .attr("fill", function(d) {
+                    return d.color;
                 });
 
-                legend.selectAll("text")
+            legend.selectAll("text")
                 .data(legendData)
                 .enter()
                 .append("text")
                 .attr("x", function(d, i) {
-
-                    return i ;
+                    return i * 100 + 24;
                 })
                 .attr("y", 9)
-                })
                 .attr("dy", ".35em")
-                .text(function (d) { 
-                    
-                    return d.label; 
+                .text(function(d) {
+                    return d.label;
                 });
+        });
     </script>
 </body>
 
