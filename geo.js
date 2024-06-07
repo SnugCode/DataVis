@@ -2,8 +2,12 @@ function init() {
     var width = 960;
     var height = 500;
 
-    // Color scale
-    var color = d3.scaleOrdinal(d3.schemeSet2);
+    // Color scale for highlighted countries
+    var highlightColor = "#69b3a2";
+    var defaultColor = "#d3d3d3";
+
+    // Countries to highlight
+    var highlightCountries = ["Australia", "Canada", "Denmark", "Germany", "Israel", "Sweden", "United States of America"];
 
     // Projection
     var projection = d3.geoMercator()
@@ -47,8 +51,8 @@ function init() {
             .append("path")
             .attr("class", "country")
             .attr("d", path)
-            .style("fill", function (d, i) {
-                return color(i);
+            .style("fill", function (d) {
+                return highlightCountries.includes(d.properties.name) ? highlightColor : defaultColor;
             })
             .on("mouseover", function (event, d) {
                 tooltip.transition()
