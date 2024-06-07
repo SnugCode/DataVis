@@ -20,9 +20,9 @@ function init() {
         .attr("height", height);
 
     // Function for panning and zooming
-    var zooming = function (d) {
-        var offset = [d3.event.transform.x, d3.event.transform.y];
-        var newScale = d3.event.transform.k * 2000;
+    var zooming = function (event) {
+        var offset = [event.transform.x, event.transform.y];
+        var newScale = event.transform.k * 2000;
         projection.translate(offset).scale(newScale);
         svg.selectAll("path").attr("d", path);
     }
@@ -50,7 +50,7 @@ function init() {
             .style("fill", function (d, i) {
                 return color(i);
             })
-            .on("click", function (d) {
+            .on("click", function (event, d) {
                 showCountryData(d);
             });
     }).catch(function (error) {
@@ -61,21 +61,6 @@ function init() {
         var countryInfo = document.getElementById("location_info");
         countryInfo.innerHTML = "<h4>" + country.properties.name + "</h4>";
     }
-
-    // Button that positions to Australia
-    d3.select("#aus_btn").on("click", function () {
-        map.transition().call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(0.48).translate(-3900, -1000));
-    });
-
-    // Button that positions to USA
-    d3.select("#usa_btn").on("click", function () {
-        map.transition().call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(0.29).translate(2800, 1700));
-    });
-
-    // Button that resets the map
-    d3.select("#reset_btn").on("click", function () {
-        map.transition().call(zoom.transform, d3.zoomIdentity.translate(width / 2, height / 2).scale(0.08));
-    });
 }
 
 window.onload = init;
