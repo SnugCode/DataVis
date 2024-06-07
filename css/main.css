@@ -1,6 +1,5 @@
 /* Reset some basic styles */
 body, h1, h2, p, ul, li, a, button {
-    
     margin: 0;
     padding: 0;
     list-style: none;
@@ -9,7 +8,6 @@ body, h1, h2, p, ul, li, a, button {
 }
 
 body {
-
     font-family: Arial, sans-serif;
     line-height: 1.6;
     margin: 0;
@@ -19,7 +17,6 @@ body {
 
 /* Header styling */
 header {
-
     background: #333;
     color: #fff;
     padding: 1rem 0;
@@ -27,25 +24,21 @@ header {
 }
 
 header h1 {
-
     margin-bottom: 0.5rem;
     text-align: center;
 }
 
 header nav ul {
-
     display: flex;
     justify-content: center;
     padding: 0;
 }
 
 header nav ul li {
-
     margin: 0 1rem;
 }
 
 header nav ul li a {
-
     color: #fff;
     text-transform: uppercase;
     font-size: 0.9rem;
@@ -53,30 +46,25 @@ header nav ul li a {
 }
 
 header nav ul li a:hover {
-
     color: #f4f4f4;
 }
 
 nav ul {
-
     list-style-type: none;
     padding: 0;
 }
 
 nav ul li {
-
     display: inline;
     margin-right: 10px;
 }
 
 nav ul li a {
-
     color: white;
     text-decoration: none;
 }
 
 .gallery {
-
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
@@ -85,7 +73,6 @@ nav ul li a {
 }
 
 .sketch {
-
     background-color: white;
     padding: 10px;
     border: 1px solid #ddd;
@@ -95,7 +82,6 @@ nav ul li a {
 }
 
 .sketch img {
-
     max-width: 100%;
     height: auto;
     display: block;
@@ -103,29 +89,24 @@ nav ul li a {
 
 /* Main content styling */
 main {
-
     padding: 2rem;
 }
 
 main section {
-
     margin-bottom: 2rem;
 }
 
 main section h2 {
-
     margin-bottom: 1rem;
     color: #333;
 }
 
 main section p {
-
     color: #555;
 }
 
 /* Team member styling */
 .team-container {
-
     display: flex;
     justify-content: center;
     gap: 2rem;
@@ -133,12 +114,10 @@ main section p {
 }
 
 .team-member {
-
     text-align: center;
 }
 
 .team-member img {
-
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -148,7 +127,6 @@ main section p {
 
 /* Button styling */
 .button-container {
-
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -157,7 +135,6 @@ main section p {
 }
 
 button {
-
     padding: 0.5rem 1rem;
     font-size: 1rem;
     border: none;
@@ -169,25 +146,22 @@ button {
 }
 
 button:hover {
-
     background-color: #555;
 }
 
 /* Footer styling */
 footer {
-
     background: #333;
     color: #fff;
     text-align: center;
     padding: 1rem 0;
-    position: fixed;
-    bottom: 0;
+    position: relative; /* Change from fixed to relative */
     width: 100%;
+    margin-top: 20px; /* Ensure footer is below content */
 }
 
 /* FlexBox Code */
 .container {
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -195,18 +169,19 @@ footer {
 }
 
 .chart-container {
-
     flex: 1;
 }
 
 /* Map styling */
 #map {
+    position: relative;
     padding: 20px;
     border: 2px solid #000;
     margin: 20px auto;
     width: fit-content;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 60px; /* Ensure footer doesn't overlap */
 }
 
 #location_info {
