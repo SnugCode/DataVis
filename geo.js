@@ -50,26 +50,32 @@ function init() {
             .style("fill", function (d, i) {
                 return color(i);
             })
-            .on("click", function (event, d) {
-                showCountryData(d);
+            .on("mouseover", function (event, d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(d.properties.name)
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
             });
     }).catch(function (error) {
         console.error("Error loading the GeoJSON file:", error);
     });
 
+    // Tooltip div
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     function showCountryData(country) {
         var countryInfo = document.getElementById("location_info");
         countryInfo.innerHTML = "<h4>" + country.properties.name + "</h4>";
     }
-
-    // Zoom buttons functionality
-    d3.select("#zoom_in").on("click", function () {
-        zoom.scaleBy(svg.transition().duration(750), 1.2);
-    });
-
-    d3.select("#zoom_out").on("click", function () {
-        zoom.scaleBy(svg.transition().duration(750), 0.8);
-    });
 }
 
 window.onload = init;

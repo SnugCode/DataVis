@@ -214,3 +214,15 @@ footer {
     text-align: center;
 }
 
+/* Tooltip styling */
+.tooltip {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    color: #333;
+}
