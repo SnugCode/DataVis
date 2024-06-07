@@ -12,6 +12,33 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
+    <style>
+        .info-button {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .info-tooltip {
+            position: absolute;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 5px;
+            display: none;
+            width: 200px;
+            font-size: 12px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -37,7 +64,7 @@
 
     <main class="container">
 
-        <div class="chart-container">
+        <div class="chart-container" style="position: relative;">
 
             <div class="button-container">
 
@@ -48,13 +75,17 @@
             </div>
 
             <div id="chart"></div>
+            <div class="info-button" id="chartInfoButton">i</div>
+            <div class="info-tooltip" id="chartInfoTooltip">This chart shows the sales of pharmaceutical drugs in different countries.</div>
 
         </div>
 
-        <div class="chart-container">
+        <div class="chart-container" style="position: relative;">
 
             <div id="secondChart"></div>
-            
+            <div class="info-button" id="secondChartInfoButton">i</div>
+            <div class="info-tooltip" id="secondChartInfoTooltip">This chart shows the spending on pharmaceutical drugs in different countries over the years.</div>
+
         </div>
 
     </main>
@@ -315,7 +346,7 @@
                 .range([b - padding, padding]);
 
             var line = d3.line()
-            .x(function(d) { 
+                .x(function(d) { 
                     return lineXScale(d.Year); 
                 })
                 .y(function(d) { 
@@ -434,6 +465,33 @@
                     return d.label;
                 });
         });
+
+        // Info button hover functionality
+        const chartInfoButton = document.getElementById('chartInfoButton');
+        const chartInfoTooltip = document.getElementById('chartInfoTooltip');
+        const secondChartInfoButton = document.getElementById('secondChartInfoButton');
+        const secondChartInfoTooltip = document.getElementById('secondChartInfoTooltip');
+
+        chartInfoButton.addEventListener('mouseover', function() {
+            chartInfoTooltip.style.display = 'block';
+            chartInfoTooltip.style.left = `${chartInfoButton.offsetLeft + 25}px`;
+            chartInfoTooltip.style.top = `${chartInfoButton.offsetTop}px`;
+        });
+
+        chartInfoButton.addEventListener('mouseout', function() {
+            chartInfoTooltip.style.display = 'none';
+        });
+
+        secondChartInfoButton.addEventListener('mouseover', function() {
+            secondChartInfoTooltip.style.display = 'block';
+            secondChartInfoTooltip.style.left = `${secondChartInfoButton.offsetLeft + 25}px`;
+            secondChartInfoTooltip.style.top = `${secondChartInfoButton.offsetTop}px`;
+        });
+
+        secondChartInfoButton.addEventListener('mouseout', function() {
+            secondChartInfoTooltip.style.display = 'none';
+        });
+
     </script>
 </body>
 
