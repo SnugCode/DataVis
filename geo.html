@@ -6,6 +6,10 @@
     <title>GeoMap</title>
     <link rel="stylesheet" href="css/main.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/queue.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v1.min.js"></script>
+    <script src="geo.js" defer></script>
 </head>
 <body>
     <header>
@@ -19,48 +23,12 @@
             </ul>
         </nav>
     </header>
-
     <div id="map"></div>
-
+    <div id="location_info"></div>
     <footer>
         <p>Data Visualization</p>
         <p>COS30045</p>
         <p>CL13 T11</p>
     </footer>
-
-    <script>
-        // Set the dimensions and margins of the map
-        const width = 960;
-        const height = 500;
-
-        // Create an SVG element and append it to the #map div
-        const svg = d3.select("#map")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        // Create a projection and a path generator
-        const projection = d3.geoMercator()
-            .scale(150)
-            .translate([width / 2, height / 1.5]);
-
-        const path = d3.geoPath().projection(projection);
-
-        // Load the GeoJSON data
-        d3.json("map.geojson").then(function(geojson) {
-
-            // Bind the data to the SVG and create one path per GeoJSON feature
-            svg.selectAll("path")
-                .data(geojson.features)
-                .enter()
-                .append("path")
-                .attr("d", path)
-                .attr("fill", "#69b3a2")
-                .attr("stroke", "#000");
-        }).catch(function(error){
-            
-            console.error("Error loading the GeoJSON file:", error);
-        });
-    </script>
 </body>
 </html>
