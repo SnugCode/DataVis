@@ -198,3 +198,18 @@ footer {
 
     flex: 1;
 }
+
+/* Map styling */
+#map {
+    padding: 20px;
+    border: 2px solid #000;
+    margin: 20px auto;
+    width: fit-content;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#location_info {
+    margin: 20px;
+    text-align: center;
+}
